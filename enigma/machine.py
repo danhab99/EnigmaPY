@@ -7,7 +7,7 @@ class Machine:
         self.transformer = [transformer]
 
     def addTransformer(self, *t):
-        if type(t[0]) is transformer:
+        if False not in [type(i) == transformer.Transformer for i in t]:
             self.transformer.append(t)
         else
             raise ValueError("Parameter(s) must be a transformer")
@@ -15,12 +15,12 @@ class Machine:
     def parse(self, d):
         r = self.abc.index(d)
         for trans in self.transformer:
-            r = trans.parse(r)
+            r = trans.parse(r, False)
 
         r = invert(r)
 
         for trans in reversed(self.transformer):
-            r = trans.parse(r)
+            r = trans.parse(r, True)
 
         return r
 
