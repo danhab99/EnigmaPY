@@ -19,3 +19,11 @@ class Rotor(transformer.Transformer):
 
         def rotate(l, n):
             return l[-n:] + l[:-n]
+
+        newCypher = rotate(self.cypher, self.offset)
+        newABC = rotate(self.abc, self.offset)
+
+        if (invert):
+            return newCypher[newABC.index(d)]
+        else:
+            return newABC[newCypher.index(d)]
