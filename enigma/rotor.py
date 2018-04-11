@@ -9,3 +9,13 @@ class Rotor(transformer.Transformer):
         self.abc = abc
 
     def parse(self, d, invert):
+        def next():
+            r = self.offset + 1
+            self.offset = r
+            if (self.offset >= len(self.cypher)):
+                self.offset = len(self.cypher)
+
+            return r
+
+        def rotate(l, n):
+            return l[-n:] + l[:-n]
