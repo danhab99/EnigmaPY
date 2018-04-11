@@ -1,4 +1,4 @@
 class Transformer:
 
-    def parse(self, d):
+    def parse(self, d, invert):
         pass;
