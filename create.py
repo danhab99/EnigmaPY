@@ -1,12 +1,13 @@
 from enigma import *
 import argparse
 import string
+from random import shuffle
 
 def genPreset(p):
     if (p == 'ABC'):
         return list("abcdefghijklmmnopqrstuvwxyz")
     if (p == 'bytes'):
-        return [str(bytes[i]) for i in range(0, 255)]
+        return [str(bytes(i)) for i in range(0, 255)]
     if (p == 'numbers'):
         return [str(i) for i in range(0, 9)]
     if (p == 'ASCII'):
@@ -24,28 +25,19 @@ def Create():
         default='bytes',
         dest='preset')
 
-    parser.print_usage()
-
     def prompt():
-        return parser.parse_args(input("create ").split())
+        return parser.parse_args(input(">>> Create ").split())
 
-    temp = prompt()
-    ABC = temp.abc
+    subparsers = parser.add_subparsers(help='Which command to run', dest='subroutine')
 
-    if (temp.preset is not None and temp.ABC is None):
-        ABC = genPreset(temp.prompt)
-
-
-    parser = argparse.ArgumentParser(description='This interactive utility is used to help you create a custom cypher for the encryptor')
-    subparsers = parser.add_subparsers('command', help='Which command to run', dest='subroutine')
-
-    create_rotor = subparsers.add_subparsers('rotor', help='Rotors are transformers that rotate their cypher by one place per each use')
-    create_plugboard = subparsers.add_subparsers('plugboard', help='Plugboards simply switch one symbol for another')
-    end = subparsers.add_subparsers('end', help='Finalizes the cypher')
+    create_rotor = subparsers.add_parser('rotor', help='Rotors are transformers that rotate their cypher by one place per each use')
+    create_plugboard = subparsers.add_parser('plugboard', help='Plugboards simply switch one symbol for another')
+    end = subparsers.add_parser('end', help='Finalizes the cypher')
 
     def addcypherArg(i):
-        i.add_argument('-c, --cypher',
-            help='The cypher to use')
+        m = i.add_mutually_exclusive_group()
+        m.add_argument('-c, --cypher', help='The cypher to use')
+        m.add_argument('-r, --random', help='Generates a random cypher', action='store_true')
 
     create_rotor.add_argument('-i, --initial',
         help='The initial rotor position to start at (default = 0)',
@@ -55,20 +47,51 @@ def Create():
     addcypherArg(create_rotor)
     addcypherArg(create_plugboard)
 
-    parser.print_usage()
+    parser.print_help()
     keepRunning = True
+    ABC = None
+
+    def bakeCypherArgs(arg):
+        if (hasattr(arg, 'cypher')):
+            return arg.cypher
+        if (hasattr(arg, 'random')):
+            return shuffle(ABC)
 
     while(keepRunning):
-        args = prompt()
+        try:
+            args = prompt()
 
-        if (args.subroutine == 'rotor'):
-            yield enigma.Rotor(abc=ABC, cypher=args.cypher, initPos=args.initial)
-            continue
+            if ((hasattr(args, 'abc') or hasattr(args, 'preset')) and not ABC):
+                if (ABC is not None):
+                    raise ValueError("Alphabet already set")
 
-        if (args.subroutine == 'plugboard'):
-            yield enigma.Plugboard(abc=ABC, cypher=args.cypher)
-            continue
+                if (hasattr(args, 'abc')):
+                    ABC = args.abc
+                    print('Set alphabet to ' + ABC)
 
-        if (args.subroutine == 'end'):
-            keepRunning = False
-            continue
+                if (hasattr(args, 'preset')):
+                    ABC = genPreset(args.preset)
+                    print('Set alphabet to preset ' + args.preset)
+
+                continue
+
+            if (not ABC):
+                raise ValueError('Please specify alphabet')
+
+            if (args.subroutine == 'rotor'):
+                yield enigma.Rotor(abc=ABC, cypher=bakeCypherArgs(args.cypher), initPos=args.initial)
+                continue
+
+            if (args.subroutine == 'plugboard'):
+                yield enigma.Plugboard(abc=ABC, cypher=bakeCypherArgs(args.cypher))
+                continue
+
+            if (args.subroutine == 'end'):
+                keepRunning = False
+                continue
+
+        except ValueError as e:
+            print(str(e))
+            parser.print_help()
+        except SystemExit:
+            pass
