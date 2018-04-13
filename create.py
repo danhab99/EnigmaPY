@@ -69,6 +69,6 @@ def Create():
             yield enigma.Plugboard(abc=ABC, cypher=args.cypher)
             continue
 
-        if (args.subroutine == 'end')
+        if (args.subroutine == 'end'):
             keepRunning = False
             continue
