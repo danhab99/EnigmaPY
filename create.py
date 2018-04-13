@@ -17,22 +17,25 @@ def genPreset(p):
 
 def Create():
     parser = argparse.ArgumentParser(description='This interactive utility is used to help you create a custom cypher for the encryptor')
-    abc_mutual = parser.add_mutually_exclusive_group()
-    abc_mutual.add_argument('--abc', help='Manually define an alphabet to be used')
-    abc_mutual.add_argument('-p, --preset',
-        help='Use one of the predefined alphabets',
-        choices=['ABC', 'bytes', 'numbers', 'ASCII', 'UTF'],
-        default='bytes',
-        dest='preset')
+
 
     def prompt():
         return parser.parse_args(input(">>> Create ").split())
 
     subparsers = parser.add_subparsers(help='Which command to run', dest='subroutine')
 
+    set_alphabet = subparsers.add_parser('abc', help='Manage the alphabet being used, **do this first**')
     create_rotor = subparsers.add_parser('rotor', help='Rotors are transformers that rotate their cypher by one place per each use')
     create_plugboard = subparsers.add_parser('plugboard', help='Plugboards simply switch one symbol for another')
     end = subparsers.add_parser('end', help='Finalizes the cypher')
+
+    abc_mutual = set_alphabet.add_mutually_exclusive_group()
+    abc_mutual.add_argument('-r, --raw', help='Manually define an alphabet to be used')
+    abc_mutual.add_argument('-p, --preset',
+        help='Use one of the predefined alphabets',
+        choices=['ABC', 'bytes', 'numbers', 'ASCII', 'UTF'],
+        default='bytes',
+        dest='preset')
 
     def addcypherArg(i):
         m = i.add_mutually_exclusive_group()
@@ -61,29 +64,23 @@ def Create():
         try:
             args = prompt()
 
-            if ((hasattr(args, 'abc') or hasattr(args, 'preset')) and not ABC):
-                if (ABC is not None):
+            if (args.subroutine == 'abc'):
+                if (ABC):
                     raise ValueError("Alphabet already set")
-
-                if (hasattr(args, 'abc')):
-                    ABC = args.abc
-                    print('Set alphabet to ' + ABC)
-
+                if (hasattr(args, 'raw')):
+                    ABC = args.raw
                 if (hasattr(args, 'preset')):
                     ABC = genPreset(args.preset)
-                    print('Set alphabet to preset ' + args.preset)
-
-                continue
 
             if (not ABC):
                 raise ValueError('Please specify alphabet')
 
             if (args.subroutine == 'rotor'):
-                yield enigma.Rotor(abc=ABC, cypher=bakeCypherArgs(args.cypher), initPos=args.initial)
+                yield Rotor(abc=ABC, cypher=bakeCypherArgs(args.cypher), initPos=args.initial)
                 continue
 
             if (args.subroutine == 'plugboard'):
-                yield enigma.Plugboard(abc=ABC, cypher=bakeCypherArgs(args.cypher))
+                yield Plugboard(abc=ABC, cypher=bakeCypherArgs(args.cypher))
                 continue
 
             if (args.subroutine == 'end'):
