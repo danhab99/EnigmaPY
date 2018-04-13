@@ -1,5 +1,18 @@
 from enigma import *
 import argparse
+import string
+
+def genPreset(p):
+    if (p == 'ABC'):
+        return list("abcdefghijklmmnopqrstuvwxyz")
+    if (p == 'bytes'):
+        return [str(bytes[i]) for i in range(0, 255)]
+    if (p == 'numbers'):
+        return [str(i) for i in range(0, 9)]
+    if (p == 'ASCII'):
+        return list(string.printable)
+    if (p == 'UTF'):
+        return [str(char(i)) for i in range(0, int(0x10ffff))]
 
 def Create():
     parser = argparse.ArgumentParser(description='This interactive utility is used to help you create a custom codex for the encryptor')
