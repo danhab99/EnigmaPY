@@ -45,7 +45,8 @@ def Create():
     create_rotor.add_argument('-i, --initial',
         help='The initial rotor position to start at (default = 0)',
         type=int,
-        default=0)
+        default=0,
+        dest='initial')
 
     addcypherArg(create_rotor)
     addcypherArg(create_plugboard)
@@ -76,11 +77,11 @@ def Create():
                 raise ValueError('Please specify alphabet')
 
             if (args.subroutine == 'rotor'):
-                yield Rotor(abc=ABC, cypher=bakeCypherArgs(args.cypher), initPos=args.initial)
+                yield Rotor(abc=ABC, cypher=bakeCypherArgs(args), initPos=args.initial)
                 continue
 
             if (args.subroutine == 'plugboard'):
-                yield Plugboard(abc=ABC, cypher=bakeCypherArgs(args.cypher))
+                yield Plugboard(abc=ABC, cypher=bakeCypherArgs(args))
                 continue
 
             if (args.subroutine == 'end'):
