@@ -1,6 +1,9 @@
-from enigma import *
+from create import Create
+from lib import Machine
+from lib import Transformer
 import argparse
-import sys, os
+# import sys, os
+import pickle
 
 parser = argparse.ArgumentParser(description='A simulation of the enigma encryption algorithm', prog='enigma.py')
 subparsers = parser.add_subparsers(help='Which command to run', dest='subroutine')
@@ -35,10 +38,10 @@ encrypt_mutual.add_argument('--random',
 
 args = parser.parse_args()
 
-# print(args)
-
 if (args.subroutine == 'create'):
-    print('Create subroutine')
+    file = list(Create())
+    with open(args.file.name, mode='wb+') as output:
+        pickle.dump(file, output, pickle.HIGHEST_PROTOCOL)
 
 if (args.subroutine == 'encrypt'):
     print('Encrypt subroutine')

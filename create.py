@@ -73,6 +73,9 @@ def Create():
                 if (hasattr(args, 'preset')):
                     ABC = genPreset(args.preset)
 
+                yield ABC
+                continue
+
             if (not ABC):
                 raise ValueError('Please specify alphabet')
 
