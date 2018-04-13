@@ -1,4 +1,4 @@
-from enigma import *
+from lib import *
 import argparse
 import string
 from random import shuffle
