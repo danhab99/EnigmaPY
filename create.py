@@ -29,7 +29,7 @@ def Create():
     create_plugboard = subparsers.add_parser('plugboard', help='Plugboards simply switch one symbol for another')
     end = subparsers.add_parser('end', help='Finalizes the cypher')
 
-    abc_mutual = set_alphabet.add_mutually_exclusive_group()
+    abc_mutual = set_alphabet.add_mutually_exclusive_group(required=True)
     abc_mutual.add_argument('-r, --raw', help='Manually define an alphabet to be used')
     abc_mutual.add_argument('-p, --preset',
         help='Use one of the predefined alphabets',
@@ -38,15 +38,14 @@ def Create():
         dest='preset')
 
     def addcypherArg(i):
-        m = i.add_mutually_exclusive_group()
+        m = i.add_mutually_exclusive_group(required=True)
         m.add_argument('-c, --cypher', help='The cypher to use')
         m.add_argument('-r, --random', help='Generates a random cypher', action='store_true')
 
-    create_rotor.add_argument('-i, --initial',
+    create_rotor.add_argument('initial',
         help='The initial rotor position to start at (default = 0)',
         type=int,
-        default=0,
-        dest='initial')
+        default=0)
 
     addcypherArg(create_rotor)
     addcypherArg(create_plugboard)
