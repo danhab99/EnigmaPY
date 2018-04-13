@@ -2,6 +2,7 @@ from lib import *
 import argparse
 import string
 from random import shuffle
+from random import randInt
 
 def genPreset(p):
     if (p == 'ABC'):
@@ -95,3 +96,15 @@ def Create():
             parser.print_help()
         except SystemExit:
             pass
+
+def random(abc, min, max):
+    for i in range(min, max):
+        select = randInt(0, 1)
+
+        if (select == 0 and rotors > -1):
+            yield Rotor(abc, shuffle(abc), randInt(0, len(abc)))
+            rotors = rotors - 1
+
+        if (select == 1 and plugs > -1):
+            yield Plugboard(abc, shuffle(abc))
+            plugs = plugs - 1
