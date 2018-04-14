@@ -1,8 +1,30 @@
 from lib import *
 import argparse
 import string
-from random import shuffle
-from random import randint
+from random import shuffle, sample, randint
+from inspect import isclass
+from create import Transformer
+
+class Cypher():
+
+    def __init__(self):
+        self.abc = None
+        self.transformers = list()
+
+    def addTransformer(self, t):
+        if (isinstance(t, Transformer) and not isclass(t)):
+            if (t.cypher is None):
+                raise ValueError("Cypher not set")
+            self.transformers.append(t)
+
+    def setABC(self, t):
+        self.abc = t
+
+    def ittTransformer(self):
+        return self.transformers
+
+    def getABC(self):
+        return self.abc
 
 def genPreset(p):
     if (p == 'ABC'):
@@ -18,7 +40,6 @@ def genPreset(p):
 
 def Create():
     parser = argparse.ArgumentParser(description='This interactive utility is used to help you create a custom cypher for the encryptor')
-
 
     def prompt():
         return parser.parse_args(input(">>> Create ").split())
