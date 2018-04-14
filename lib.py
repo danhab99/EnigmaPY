@@ -1,15 +1,23 @@
 class Transformer:
 
+    def __init__(self, abc, cypher):
+        self.abc = abc
+        self.cypher = cypher
+
     def parse(self, d, index, invert):
         pass;
+
+    def getABC(self):
+        return self.abc
+
+    def getCypher(self):
+        return self.cypher
 
 class Rotor(Transformer):
 
     def __init__(self, abc, cypher, initPos):
-        self.cypher = cypher
+        super.__init__(self, abc, cypher)
         self.offset = initPos
-        self.cypher = cypher
-        self.abc = abc
 
     def parse(self, d, index, invert):
         def rotate(l, n):
@@ -30,8 +38,7 @@ class Rotor(Transformer):
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
-        self.abc = abc
-        self.cypher = cypher
+        super.__init__(self, abc, cypher)
 
     def parse(self, d, index, invert):
         if (invert):
@@ -43,16 +50,14 @@ class Machine:
 
     def __init__(self, abc):
         self.abc = abc;
-        self.transformer = [transformer]
+        self.transformer = [Transformer]
 
     def addTransformer(self, *t):
-        if False not in [type(i) == transformer.Transformer for i in t]:
-            self.transformer.append(t)
-        else:
-            raise ValueError("Parameter(s) must be a transformer")
+        self.transformer.append(t)
 
     def parse(self, d, index):
-        r = self.abc.index(d)
+        D = str(d)
+        r = self.abc.index(D)
         for trans in self.transformer:
             r = trans.parse(d=r, index=index, invert=False)
 
