@@ -46,37 +46,38 @@ encrypt_mutual.add_argument('--random',
 args = parser.parse_args()
 
 if (args.test):
-    with open(args.test.name, mode='rb') as file:
+    with open('cypher.pkl', mode='rb') as file:
         cypher = pickle.load(file)
-        abc = cypher[0].getABC()
+        abc = cypher.getABC()
         # print(cypher)
-        machine = Machine(abc)
-        [machine.addTransformer(i) for i in cypher]
+        machine = Machine(cypher)
 
         def gen(length):
-            c = [shuffle(abc)] * length
-            return chain(c)
+            c = [sample(abc, len(abc))] * length
+            return chain.from_iterable(c)
 
         def transform(d):
-            return [machine.parse(i, value) for i, value in enumerate(d)]
+            return [machine.parse(value, counter) for counter, value in enumerate(d)]
 
-        testData = gen(5)
+        testData = list(gen(5))
+        pdb.set_trace()
         results = transform(transform(testData))
         if (False not in [item[0] == item[1] for item in zip(testData, results)]):
             print("This is a valid cypher")
         else:
             print("This is NOT a valid cypher")
 
+
 if (args.subroutine == 'create'):
-    file = list(create.Create())
+    file = create.Create()
     with open(args.file.name, mode='wb+') as output:
         pickle.dump(file, output)
 
 if (args.subroutine == 'encrypt'):
-    CYPHER = None
+    machine = None
     if (args.codex):
         with open(args.codex, 'rb') as file:
-            CYPHER = pickle.load(file)
+            machine = Machine(pickle.load(file))
 
     if (args.random):
         CYPHER = create.random(create.genPreset(args.random[0]), args.random[1], args.random[2])

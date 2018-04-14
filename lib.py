@@ -36,9 +36,9 @@ class Rotor(Transformer):
         newABC = rotate(self.abc, offset)
 
         if (invert):
-            return newCypher[newABC.index(d)]
+            return newCypher[newABC.index(str(d))]
         else:
-            return newABC[newCypher.index(d)]
+            return newABC[newCypher.index(str(d))]
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
@@ -52,34 +52,28 @@ class Plugboard(Transformer):
 
 class Machine:
 
-    def __init__(self, abc):
-        self.abc = abc;
-        self.transformer = list()
-
-    def addTransformer(self, t):
-        if (isinstance(t, Transformer) and not isclass(t)):
-            self.transformer.append(t)
-        else:
-            raise ValueError("Input must be transformer instance")
+    def __init__(self, cypher):
+        self.cypher = cypher
 
     def parse(self, d, index):
         D = str(d)
-        r = self.abc.index(D)
+        r = self.cypher.abc.index(D)
 
-        print(self.transformer)
-        for trans in list(self.transformer):
+        for trans in list(self.cypher.ittTransformer()):
             r = trans.parse(d=r, index=index, invert=False)
 
-        r = invert(r)
+        r = self.invert(r)
 
-        for trans in reversed(self.transformer):
+        for trans in reversed(self.cypher.ittTransformer()):
             r = trans.parse(r, index, True)
 
         return r
 
     def invert(self, d):
-        work = self.abc.index(d)
-        work = word / len(self.abc)
-        work = 1 - work
-        work = work * len(self.abc)
-        return self.abc[work]
+        abc = self.cypher.getABC()
+        l = len(abc)
+        p = abc.index(d)
+        if (p < (l / 2)):
+            return abc[-p]
+        else:
+            return abc[l - p]
