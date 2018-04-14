@@ -122,13 +122,16 @@ def Create():
 
     return cypher
 def random(abc, min, max):
+    c = Cypher()
+    c.setABC(abc)
+
+    def shuff():
+        return sample(abc, len(abc))
+
     for i in range(min, max):
-        select = randint(0, 1)
+        if (randint(0, 1) == 0):
+            c.addTransformer(Rotor(abc, shuff, randint(0, len(abc))))
+        else:
+            c.addTransformer(Plugboard(abc, shuff, randint(0, len(abc))))
 
-        if (select == 0 and rotors > -1):
-            yield Rotor(abc, shuffle(abc), randint(0, len(abc)))
-            rotors = rotors - 1
-
-        if (select == 1 and plugs > -1):
-            yield Plugboard(abc, shuffle(abc))
-            plugs = plugs - 1
+    return c
