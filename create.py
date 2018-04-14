@@ -61,8 +61,8 @@ def Create():
 
     def addcypherArg(i):
         m = i.add_mutually_exclusive_group(required=True)
-        m.add_argument('-c, --cypher', help='The cypher to use')
-        m.add_argument('-r, --random', help='Generates a random cypher', action='store_true')
+        m.add_argument('-c, --cypher', help='The cypher to use', dest='cypher')
+        m.add_argument('-r, --random', help='Generates a random cypher', action='store_true', dest='cypher')
 
     create_rotor.add_argument('initial',
         help='The initial rotor position to start at (default = 0)',
@@ -78,13 +78,11 @@ def Create():
     cypher = Cypher()
 
     def bakeCypherArgs(arg):
-        if (hasattr(arg, 'cypher')):
+        # print(arg)
+        if (arg.cypher is True):
+            return sample(ABC, len(ABC))
+        else:
             return arg.cypher
-        if (hasattr(arg, 'random')):
-            r = sample(ABC, len(ABC))
-            print ("RANDOM RETURN")
-            print(r)
-            return r
 
     while(keepRunning):
         try:
