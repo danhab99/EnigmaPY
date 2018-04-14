@@ -1,20 +1,23 @@
-import pdb, create
+import pdb, create, pickle
+from random import sample
+from itertools import chain
 
-with open(args.test.name, mode='rb') as file:
+with open('testCypher.pkl', mode='rb') as file:
     cypher = pickle.load(file)
     abc = cypher[0].getABC()
     # print(cypher)
-    machine = Machine(abc)
+    machine = create.Machine(abc)
     [machine.addTransformer(i) for i in cypher]
 
     def gen(length):
-        c = [shuffle(abc)] * length
-        return chain(c)
+        c = [sample(abc, len(abc))] * length
+        return chain.from_iterable(c)
 
     def transform(d):
-        return [machine.parse(i, value) for i, value in enumerate(d)]
+        return [machine.parse(value, counter) for counter, value in enumerate(d)]
 
-    testData = gen(5)
+    testData = list(gen(5))
+    pdb.set_trace()
     results = transform(transform(testData))
     if (False not in [item[0] == item[1] for item in zip(testData, results)]):
         print("This is a valid cypher")

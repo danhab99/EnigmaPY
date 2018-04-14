@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from inspect import isclass
 
 class Transformer(ABC):
 
@@ -53,21 +54,26 @@ class Machine:
 
     def __init__(self, abc):
         self.abc = abc;
-        self.transformer = [Transformer]
+        self.transformer = list()
 
-    def addTransformer(self, *t):
-        self.transformer.append(t)
+    def addTransformer(self, t):
+        if (isinstance(t, Transformer) and not isclass(t)):
+            self.transformer.append(t)
+        else:
+            raise ValueError("Input must be transformer instance")
 
     def parse(self, d, index):
         D = str(d)
         r = self.abc.index(D)
-        for trans in self.transformer:
+
+        print(self.transformer)
+        for trans in list(self.transformer):
             r = trans.parse(d=r, index=index, invert=False)
 
         r = invert(r)
 
         for trans in reversed(self.transformer):
-            r = trans.parse(d=r, index=index, invert=True)
+            r = trans.parse(r, index, True)
 
         return r
 
