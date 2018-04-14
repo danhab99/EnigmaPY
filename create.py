@@ -2,7 +2,7 @@ from lib import *
 import argparse
 import string
 from random import shuffle
-from random import randInt
+from random import randint
 
 def genPreset(p):
     if (p == 'ABC'):
@@ -72,8 +72,6 @@ def Create():
                     ABC = args.raw
                 if (hasattr(args, 'preset')):
                     ABC = genPreset(args.preset)
-
-                yield ABC
                 continue
 
             if (not ABC):
@@ -99,10 +97,10 @@ def Create():
 
 def random(abc, min, max):
     for i in range(min, max):
-        select = randInt(0, 1)
+        select = randint(0, 1)
 
         if (select == 0 and rotors > -1):
-            yield Rotor(abc, shuffle(abc), randInt(0, len(abc)))
+            yield Rotor(abc, shuffle(abc), randint(0, len(abc)))
             rotors = rotors - 1
 
         if (select == 1 and plugs > -1):
