@@ -1,9 +1,12 @@
-class Transformer:
+from abc import ABC, abstractmethod
+
+class Transformer(ABC):
 
     def __init__(self, abc, cypher):
         self.abc = abc
         self.cypher = cypher
 
+    @abstractmethod
     def parse(self, d, index, invert):
         pass;
 
@@ -16,7 +19,7 @@ class Transformer:
 class Rotor(Transformer):
 
     def __init__(self, abc, cypher, initPos):
-        super.__init__(self, abc, cypher)
+        super().__init__(abc, cypher)
         self.offset = initPos
 
     def parse(self, d, index, invert):
@@ -38,7 +41,7 @@ class Rotor(Transformer):
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
-        super.__init__(self, abc, cypher)
+        super().__init__(abc, cypher)
 
     def parse(self, d, index, invert):
         if (invert):
