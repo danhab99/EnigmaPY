@@ -75,12 +75,16 @@ def Create():
     parser.print_help()
     keepRunning = True
     ABC = None
+    cypher = Cypher()
 
     def bakeCypherArgs(arg):
         if (hasattr(arg, 'cypher')):
             return arg.cypher
         if (hasattr(arg, 'random')):
-            return shuffle(ABC)
+            r = sample(ABC, len(ABC))
+            print ("RANDOM RETURN")
+            print(r)
+            return r
 
     while(keepRunning):
         try:
@@ -93,17 +97,19 @@ def Create():
                     ABC = args.raw
                 if (hasattr(args, 'preset')):
                     ABC = genPreset(args.preset)
+
+                cypher.setABC(ABC)
                 continue
 
             if (not ABC):
                 raise ValueError('Please specify alphabet')
 
             if (args.subroutine == 'rotor'):
-                yield Rotor(abc=ABC, cypher=bakeCypherArgs(args), initPos=args.initial)
+                cypher.addTransformer(Rotor(abc=ABC, cypher=bakeCypherArgs(args), initPos=args.initial))
                 continue
 
             if (args.subroutine == 'plugboard'):
-                yield Plugboard(abc=ABC, cypher=bakeCypherArgs(args))
+                cypher.addTransformer(Plugboard(abc=ABC, cypher=bakeCypherArgs(args)))
                 continue
 
             if (args.subroutine == 'end'):
@@ -116,6 +122,7 @@ def Create():
         except SystemExit:
             pass
 
+    return cypher
 def random(abc, min, max):
     for i in range(min, max):
         select = randint(0, 1)
