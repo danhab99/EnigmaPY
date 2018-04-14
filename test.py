@@ -1,13 +1,13 @@
 import pdb, create, pickle
 from random import sample
 from itertools import chain
+from lib import Machine
 
-with open('testCypher.pkl', mode='rb') as file:
+with open('cypher.pkl', mode='rb') as file:
     cypher = pickle.load(file)
-    abc = cypher[0].getABC()
+    abc = cypher.getABC()
     # print(cypher)
-    machine = create.Machine(abc)
-    [machine.addTransformer(i) for i in cypher]
+    machine = Machine(cypher)
 
     def gen(length):
         c = [sample(abc, len(abc))] * length
