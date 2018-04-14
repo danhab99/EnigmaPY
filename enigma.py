@@ -49,9 +49,9 @@ if (args.test):
     with open(args.test.name, mode='rb') as file:
         cypher = pickle.load(file)
         abc = cypher[0].getABC()
-        print(abc)
+        # print(cypher)
         machine = Machine(abc)
-        machine.addTransformer(cypher)
+        [machine.addTransformer(i) for i in cypher]
 
         def gen(length):
             c = [shuffle(abc)] * length
@@ -70,7 +70,7 @@ if (args.test):
 if (args.subroutine == 'create'):
     file = list(create.Create())
     with open(args.file.name, mode='wb+') as output:
-        pickle.dump(file, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(file, output)
 
 if (args.subroutine == 'encrypt'):
     CYPHER = None
