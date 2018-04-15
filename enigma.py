@@ -34,14 +34,9 @@ encrypt_parser.add_argument('out_file',
     metavar='<Out file>',
     type=argparse.FileType('w'),
     help='The destination for the resuts')
-
-encrypt_mutual = encrypt_parser.add_mutually_exclusive_group(required=True)
-encrypt_mutual.add_argument('--codex',
+encrypt_parser.add_argument('codex',
     type=argparse.FileType('r'),
     help='The codex to use')
-encrypt_mutual.add_argument('--random',
-    nargs=3,
-    help='Create a random codex using a preset alphabet [ABC, bytes, numbers, ASCII, UTF], a minimum number of transformers, and a maximum number of transformers')
 
 args = parser.parse_args()
 
@@ -75,15 +70,10 @@ if (args.subroutine == 'create'):
 
 if (args.subroutine == 'encrypt'):
     machine = None
-    if (args.codex):
-        with open(args.codex, 'rb') as file:
-            machine = Machine(pickle.load(file))
+    with open(args.codex.name, 'rb') as file:
+        machine = Machine(pickle.load(file))
 
-    if (args.random):
-        CYPHER = create.random(create.genPreset(args.random[0]), args.random[1], args.random[2])
-
-    machine = Machine(abc=CYPHER[0].getABC())
-    with open(args.in_file.name, 'rb') as input, open(args.out_file.name, 'wb') as output:
-        clean = input.read()
-        crypt = [machine.parse(i, value) for i in enumerate(clean)]
-        output.write(crypt)
+    with open(args.in_file.name, mode='rb') as input, open(args.out_file.name, mode='wb+') as output:
+        for chunk in iter(lambda: input.read(2 ** 7), b''):
+            crypt = [machine.parse(item, index) for index, item in enumerate(chunk)]
+            output.write(crypt)
