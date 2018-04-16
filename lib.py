@@ -36,9 +36,9 @@ class Rotor(Transformer):
         newABC = rotate(self.abc, offset)
 
         if (invert):
-            return newCypher[newABC.index(str(d))]
+            return newCypher[newABC.index(d)]
         else:
-            return newABC[newCypher.index(str(d))]
+            return newABC[newCypher.index(d)]
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
@@ -56,8 +56,7 @@ class Machine:
         self.cypher = cypher
 
     def parse(self, d, index):
-        D = str(d)
-        r = self.cypher.abc.index(D)
+        r = d
 
         for trans in list(self.cypher.ittTransformer()):
             r = trans.parse(d=r, index=index, invert=False)
@@ -67,7 +66,7 @@ class Machine:
         for trans in reversed(self.cypher.ittTransformer()):
             r = trans.parse(r, index, True)
 
-        return r
+        return abc[r]
 
     def invert(self, d):
         abc = self.cypher.getABC()
