@@ -126,7 +126,7 @@ def Create():
                 continue
 
             if (args.subroutine == 'plugboard'):
-                cypher.addTransformer(Plugboard(abc=ABC, cypher=ca[0]))
+                cypher.addTransformer(Plugboard(abc=ABC, cypher=ca))
                 continue
 
         except ValueError as e:
