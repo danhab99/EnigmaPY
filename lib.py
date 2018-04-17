@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
+import pdb
 
 class Transformer(ABC):
 
@@ -36,19 +37,22 @@ class Rotor(Transformer):
         newABC = rotate(self.abc, offset)
 
         if (invert):
-            return newCypher[newABC.index(d)]
+            return newCypher.index(newABC.index(d))
         else:
-            return newABC[newCypher.index(d)]
+            return newABC.index(newCypher.index(d))
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
         super().__init__(abc, cypher)
 
     def parse(self, d, index, invert):
-        if (invert):
-            return self.cypher[self.abc.index(d)]
-        else:
-            return self.abc[self.cypher.index(d)]
+        try:
+            if (invert):
+                return self.cypher.index(self.abc[d])
+            else:
+                return self.abc.index(self.cypher[d])
+        except:
+            pdb.set_trace()
 
 class Machine:
 
@@ -70,5 +74,5 @@ class Machine:
         return self.abc[r]
 
     def invert(self, i):
-        l = len(self.abc)
+        l = len(self.abc) - 1
         return l - i
