@@ -54,9 +54,10 @@ class Machine:
 
     def __init__(self, cypher):
         self.cypher = cypher
+        self.abc = self.cypher.ittTransformer()[0].getABC()
 
     def parse(self, d, index):
-        r = d
+        r = self.abc.index(d)
 
         for trans in list(self.cypher.ittTransformer()):
             r = trans.parse(d=r, index=index, invert=False)
@@ -64,9 +65,9 @@ class Machine:
         r = self.invert(r)
 
         for trans in reversed(self.cypher.ittTransformer()):
-            r = trans.parse(r, index, True)
+            r = trans.parse(d=r, index=index, invert=True)
 
-        return abc[r]
+        return self.abc[r]
 
     def invert(self, i):
         l = len(self.abc)
