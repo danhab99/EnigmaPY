@@ -5,8 +5,14 @@ from lib import Machine
 
 with open('cypher.pkl', mode='rb') as file:
     cypher = pickle.load(file)
-    abc = cypher.getABC()
-    # print(cypher)
+
+    # for value in cypher.ittTransformer():
+    #     print(type(value))
+    #     print(value.getABC())
+    #     print(value.getCypher())
+
+    # pdb.set_trace()
+    abc = cypher.ittTransformer()[0].getABC()
     machine = Machine(cypher)
 
     def gen(length):
@@ -17,7 +23,6 @@ with open('cypher.pkl', mode='rb') as file:
         return [machine.parse(value, counter) for counter, value in enumerate(d)]
 
     testData = list(gen(5))
-    pdb.set_trace()
     results = transform(transform(testData))
     if (False not in [item[0] == item[1] for item in zip(testData, results)]):
         print("This is a valid cypher")
