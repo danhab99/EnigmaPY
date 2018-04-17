@@ -68,11 +68,6 @@ class Machine:
 
         return abc[r]
 
-    def invert(self, d):
-        abc = self.cypher.getABC()
-        l = len(abc)
-        p = abc.index(d)
-        if (p < (l / 2)):
-            return abc[-p]
-        else:
-            return abc[l - p]
+    def invert(self, i):
+        l = len(self.abc)
+        return l - i
