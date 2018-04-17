@@ -6,12 +6,6 @@ from lib import Machine
 with open('cypher.pkl', mode='rb') as file:
     cypher = pickle.load(file)
 
-    # for value in cypher.ittTransformer():
-    #     print(type(value))
-    #     print(value.getABC())
-    #     print(value.getCypher())
-
-    # pdb.set_trace()
     abc = cypher.ittTransformer()[0].getABC()
     machine = Machine(cypher)
 

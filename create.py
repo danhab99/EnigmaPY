@@ -136,18 +136,3 @@ def Create():
             pass
 
     return cypher
-
-# def random(abc, min, max):
-#     c = Cypher()
-#     c.setABC(abc)
-#
-#     def shuff():
-#         return sample(abc, len(abc))
-#
-#     for i in range(min, max):
-#         if (randint(0, 1) == 0):
-#             c.addTransformer(Rotor(abc, shuff, randint(0, len(abc))))
-#         else:
-#             c.addTransformer(Plugboard(abc, shuff, randint(0, len(abc))))
-#
-#     return c
