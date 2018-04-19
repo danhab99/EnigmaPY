@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
 import pdb
+import traceback
 
 class Transformer(ABC):
 
@@ -37,22 +38,19 @@ class Rotor(Transformer):
         newABC = rotate(self.abc, offset)
 
         if (invert):
-            return newCypher.index(newABC.index(d))
+            return newCypher.index(newABC[d])
         else:
-            return newABC.index(newCypher.index(d))
+            return newABC.index(newCypher[d])
 
 class Plugboard(Transformer):
     def __init__(self, abc, cypher):
         super().__init__(abc, cypher)
 
     def parse(self, d, index, invert):
-        try:
-            if (invert):
-                return self.cypher.index(self.abc[d])
-            else:
-                return self.abc.index(self.cypher[d])
-        except:
-            pdb.set_trace()
+        if (invert):
+            return self.cypher.index(self.abc[d])
+        else:
+            return self.abc.index(self.cypher[d])
 
 class Machine:
 
@@ -61,17 +59,25 @@ class Machine:
         self.abc = self.cypher.ittTransformer()[0].getABC()
 
     def parse(self, d, index):
-        r = self.abc.index(d)
+        try:
+            if (type(d) is int):
+                d = bytes([d])
 
-        for trans in list(self.cypher.ittTransformer()):
-            r = trans.parse(d=r, index=index, invert=False)
+            r = self.abc.index(d)
 
-        r = self.invert(r)
+            for trans in list(self.cypher.ittTransformer()):
+                r = trans.parse(d=r, index=index, invert=False)
 
-        for trans in reversed(self.cypher.ittTransformer()):
-            r = trans.parse(d=r, index=index, invert=True)
+            r = self.invert(r)
 
-        return self.abc[r]
+            for trans in reversed(self.cypher.ittTransformer()):
+                r = trans.parse(d=r, index=index, invert=True)
+
+            return self.abc[r]
+        except:
+            traceback.print_exc()
+            pdb.set_trace()
+            return self.parse(d, index)
 
     def invert(self, i):
         l = len(self.abc) - 1

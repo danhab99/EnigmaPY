@@ -4,7 +4,7 @@ from lib import Transformer
 import argparse
 import pickle
 from itertools import chain
-from random import shuffle
+from random import sample
 
 parser = argparse.ArgumentParser(description='A simulation of the enigma encryption algorithm', prog='enigma.py')
 
@@ -41,9 +41,9 @@ encrypt_parser.add_argument('codex',
 args = parser.parse_args()
 
 if (args.test):
-    with open('cypher.pkl', mode='rb') as file:
+    with open(args.test.name, mode='rb') as file:
         cypher = pickle.load(file)
-        abc = cypher.getABC()
+        abc = cypher.ittTransformer()[0].getABC()
         # print(cypher)
         machine = Machine(cypher)
 
@@ -55,7 +55,6 @@ if (args.test):
             return [machine.parse(value, counter) for counter, value in enumerate(d)]
 
         testData = list(gen(5))
-        pdb.set_trace()
         results = transform(transform(testData))
         if (False not in [item[0] == item[1] for item in zip(testData, results)]):
             print("This is a valid cypher")
@@ -74,6 +73,7 @@ if (args.subroutine == 'encrypt'):
         machine = Machine(pickle.load(file))
 
     with open(args.in_file.name, mode='rb') as input, open(args.out_file.name, mode='wb+') as output:
-        for chunk in iter(lambda: input.read(2 ** 7), b''):
-            crypt = [machine.parse(item, index) for index, item in enumerate(chunk)]
-            output.write(crypt)
+        clean = input.read()
+        crypt = [machine.parse(value, counter) for counter, value in enumerate(clean)]
+        write = b''.join(crypt)
+        output.write(write)
