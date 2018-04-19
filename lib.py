@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from inspect import isclass
-import pdb
 import traceback
 
 class Transformer(ABC):
@@ -58,26 +57,25 @@ class Machine:
         self.cypher = cypher
         self.abc = self.cypher.ittTransformer()[0].getABC()
 
-    def parse(self, d, index):
-        try:
-            if (type(d) is int):
-                d = bytes([d])
+    def parse(self, d, index, statusLimit=-1):
+        if (type(d) is int):
+            d = bytes([d])
 
-            r = self.abc.index(d)
+        r = self.abc.index(d)
 
-            for trans in list(self.cypher.ittTransformer()):
-                r = trans.parse(d=r, index=index, invert=False)
+        for trans in list(self.cypher.ittTransformer()):
+            r = trans.parse(d=r, index=index, invert=False)
 
-            r = self.invert(r)
+        r = self.invert(r)
 
-            for trans in reversed(self.cypher.ittTransformer()):
-                r = trans.parse(d=r, index=index, invert=True)
+        for trans in reversed(self.cypher.ittTransformer()):
+            r = trans.parse(d=r, index=index, invert=True)
 
-            return self.abc[r]
-        except:
-            traceback.print_exc()
-            pdb.set_trace()
-            return self.parse(d, index)
+        if (statusLimit > 0):
+            if (index % statusLimit == 0):
+                print('.', sep=' ', end=' ', flush=True)
+
+        return self.abc[r]
 
     def invert(self, i):
         l = len(self.abc) - 1

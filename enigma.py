@@ -3,7 +3,7 @@ from lib import Machine
 from lib import Transformer
 import argparse
 import pickle
-from itertools import chain
+from itertools import groupby, count, chain
 from random import sample
 
 parser = argparse.ArgumentParser(description='A simulation of the enigma encryption algorithm', prog='enigma.py')
@@ -72,8 +72,23 @@ if (args.subroutine == 'encrypt'):
     with open(args.codex.name, 'rb') as file:
         machine = Machine(pickle.load(file))
 
-    with open(args.in_file.name, mode='rb') as input, open(args.out_file.name, mode='wb+') as output:
-        clean = input.read()
-        crypt = [machine.parse(value, counter) for counter, value in enumerate(clean)]
-        write = b''.join(crypt)
-        output.write(write)
+    with open(args.in_file.name, mode='rb') as input, open(args.out_file.name, mode='wb+', buffering=1024) as output:
+        print("Running")
+        # clean = input.read()
+        # crypt = [machine.parse(value, counter, 1000) for counter, value in enumerate(clean)]
+        # output.write(b''.join(crypt))
+
+        def read_in_chunks(file_object, chunk_size=1024):
+            """Lazy function (generator) to read a file piece by piece.
+            Default chunk size: 1k."""
+            while True:
+                data = file_object.read(chunk_size)
+                if not data:
+                    break
+                yield data
+
+        for piece in read_in_chunks(input, 512):
+            crypt = [machine.parse(value, counter, 1000) for counter, value in enumerate(piece)]
+            output.write(b''.join(crypt))
+
+        print("Done")
